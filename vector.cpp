@@ -1,5 +1,6 @@
 #include<iostream>
 #include <stdio.h>
+#include <stdexcept>
 #include <string.h>
 using namespace std;
 
@@ -22,7 +23,10 @@ public:
         sz=0;
     }
 
-    T& operator[](int i) { return &first[i]; }
+    T& operator[](const int i) {
+        if(i>=sz || i<0) throw out_of_range ("Index is out of bounds!");
+        return first[i];
+    }
 
     int size(){ return sz;}
 
@@ -49,9 +53,14 @@ public:
 };
 
 int main(){
-    vector<string>*V=new vector<string>(4);
-    V->push_back("hello");
-    V->push_back("my first structure");
-    cout<<V->size();
-    V->print();
+    vector<string>V(4);
+    V.push_back("hello");
+    V.push_back("my first structure");
+    cout<<V.size()<<endl;
+    try{
+    cout<<V[20]<<endl;
+    }catch (const out_of_range& oor) {
+        std::cerr << "Out of Range error: " << oor.what() <<endl;
+    }
+    V.print();
 }
