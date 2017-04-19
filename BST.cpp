@@ -76,6 +76,11 @@ public:
     }
 };
 
+template<typename T>
+class RedBlack: public BST<T> {
+
+};
+
 
 int main(){
     BST<int> test;
