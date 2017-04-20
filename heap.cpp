@@ -18,6 +18,15 @@ class Heap {
         hp.push_back(elem);
         up(index);
     }
+    T pop(){
+        T ret=hp[1];
+        swap(hp[1],hp[length()-1]);
+        swap(rank[hp[1]],rank[hp[length()-1]]);
+        rank.erase(hp[length()-1]);
+        hp.resize(hp.size()-1);
+        down(1);
+        return ret;
+    }
     void up(int index){
         while (index>1 && hp[index]>hp[index/2]){
             swap(hp[index],hp[index/2]);
@@ -29,11 +38,11 @@ class Heap {
         int right=left+1;
         int n=length();
         if(left<n && hp[left]>hp[index] && hp[left]>hp[right]){
-            swap(rank[left],rank[index]);
+            swap(rank[hp[left]],rank[hp[index]]);
             swap(hp[left],hp[index]);
             down(left);
         }else if(right<n && hp[right]>hp[index]){
-            swap(rank[right],rank[index]);
+            swap(rank[hp[right]],rank[hp[index]]);
             swap(hp[right],hp[index]);
             down(right);
         }else{
@@ -48,13 +57,7 @@ class Heap {
     int length(){
         return hp.size();
     }
-
-
-
 } ;
-
-
-
 
 int main(){
 
