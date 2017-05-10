@@ -8,18 +8,21 @@ class BST{
 
     BST* right;
     BST* left;
+    BST* parent;
     bool isempty;
 public:
     T data;
     BST(){
         right=nullptr;
         left=nullptr;
+        parent=nullptr;
         isempty=true;
     }
     BST(T tmp){
         data=tmp;
         right=nullptr;
         left=nullptr;
+        parent=nullptr;
         isempty=true;
     }
     ~BST(){
@@ -38,11 +41,13 @@ public:
                 else ptr=ptr->left;
             }
             ptr=par;
-            if(tmp> ptr->data)ptr->right=new BST<T>(tmp);
-            else if(tmp< ptr->data) ptr->left=new BST<T>(tmp);
+            BST<T>* nptr=new BST<T>(tmp);
+            if(tmp> ptr->data)ptr->right=nptr;
+            else if(tmp< ptr->data) ptr->left=nptr;
+            nptr->parent=ptr;
         }
     }
-    bool find(T tmp){
+    bool findbool(T tmp){
         if(isempty)  throw logic_error( "the tree is empty" );
         BST<T>* ptr=this;
         while (ptr){
@@ -51,6 +56,16 @@ public:
             else ptr=ptr->right;
         }
         return false;
+    }
+    BST<T>* find(T tmp){
+        if(isempty)  throw logic_error( "the tree is empty" );
+        BST<T>* ptr=this;
+        while (ptr){
+            if(ptr->data==tmp)return ptr;
+            else if (ptr->data>=tmp)ptr=ptr->left;
+            else ptr=ptr->right;
+        }
+        return nullptr;
     }
      void display( BST<T>* dis){
         if(!dis)return;
@@ -74,6 +89,55 @@ public:
         }
         return ret;
     }
+    int direction(BST<T>* ptr){
+        if(!ptr->parent)return 0;
+        if((ptr->parent)->right==ptr)return 1;
+        return -1;
+    }
+    BST<T>* min(){
+        BST<T>* ptr=this;
+        while (ptr->left){
+            ptr=ptr->left;
+        }
+        return ptr;
+    }
+    void remove(T toDel){
+        BST<T>* ptr=find(toDel);
+        if(!ptr)return;
+        int dir=direction(ptr);
+        if(!ptr->left){
+            if(ptr->right){
+                if(dir==1)ptr->parent->right=ptr->right;
+                else if(dir==-1)ptr->parent->left=ptr->right;
+                ptr->right->parent=ptr->parent;
+            }else{
+                if(dir==1)ptr->parent->right=nullptr;
+                else if(dir==-1)ptr->parent->left=nullptr;
+            }
+            ptr->right=nullptr;
+            ptr->parent=nullptr;
+            delete ptr;
+        }else{
+            if(!ptr->right){
+                if(dir==1)ptr->parent->right=ptr->left;
+                else if(dir==-1)ptr->parent->left=ptr->left;
+                ptr->left->parent=ptr->parent;
+
+                ptr->parent=nullptr;
+                delete ptr;
+            }else{
+                BST<T>*ext=ptr->right->min();
+                ptr->data=ext->data;
+                int dir2=direction(ext);
+                if(dir==1)ext->parent->right=nullptr;
+                else if(dir==-1) ext->parent->left=nullptr;
+                ext->right=nullptr;
+                ext->left=nullptr;
+                ext->parent=nullptr;
+                delete ext;
+            }
+        }
+    }
 };
 
 template<typename T>
@@ -90,11 +154,12 @@ int main(){
     test.insert(-1);
     test.insert(5);
 
-    cout<<test.find(0);
-    cout<<test.find(2);
-    cout<<test.find(3);
-    cout<<test.find(10)<<endl;
-
+    cout<<test.findbool(0);
+    cout<<test.findbool(2);
+    cout<<test.findbool(3);
+    cout<<test.findbool(10)<<endl;
+    test.remove(3);
+    cout<<test.findbool(5)<<endl;
     cout<<"------------------------"<<endl;
     BST<int>*ptr=&test;
     test.display(ptr);
