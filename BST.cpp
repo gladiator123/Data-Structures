@@ -12,21 +12,10 @@ class BST{
     bool isempty;
 public:
     T data;
-    BST(){
-        right=nullptr;
-        left=nullptr;
-        parent=nullptr;
-        isempty=true;
-    }
-    BST(T tmp){
-        data=tmp;
-        right=nullptr;
-        left=nullptr;
-        parent=nullptr;
-        isempty=true;
+
+    BST(T tmp=0):data(tmp),right(nullptr),left(nullptr),parent(nullptr),isempty(true){
     }
     ~BST(){
-
     }
     void insert(T tmp){
         if(isempty){
@@ -69,8 +58,6 @@ public:
     }
      void display( BST<T>* dis){
         if(!dis)return;
-    //  cout<<"displaying the tree"<<endl;
-        //cout<< *this <<end;
         display(dis->right);
         display(dis->left);
     }
@@ -129,8 +116,12 @@ public:
                 BST<T>*ext=ptr->right->min();
                 ptr->data=ext->data;
                 int dir2=direction(ext);
-                if(dir==1)ext->parent->right=nullptr;
-                else if(dir==-1) ext->parent->left=nullptr;
+            ////////////////////////////////    BST<T>*  to fill
+                if(ext->right){
+                    if(dir==1)ext->parent->right=nullptr;
+                    else if(dir==-1) ext->parent->left=nullptr;
+                }
+
                 ext->right=nullptr;
                 ext->left=nullptr;
                 ext->parent=nullptr;
